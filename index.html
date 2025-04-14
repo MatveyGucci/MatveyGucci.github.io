@@ -5,12 +5,10 @@
   <title>Рост числа</title>
   <style>
     body {
-      background-color: black;
-      color: yellow;
       font-family: sans-serif;
       text-align: center;
       margin-top: 20%;
-      font-size: 64px;
+      font-size: 48px;
     }
   </style>
 </head>
@@ -18,15 +16,19 @@
   <div id="number"></div>
 
   <script>
-    const startDate = new Date("2025-04-14");
-    const today = new Date();
-    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    const startTime = new Date("2025-04-14T00:00:00Z"); // Старт с полуночи UTC 14 апреля 2025
     const baseValue = 9;
-    const dailyIncrease = 1.05;
-    const result = baseValue * Math.pow(dailyIncrease, daysPassed);
+    const increasePerSecond = 1.001; // 0.1% = x1.001
 
-    const formatted = result.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " грн";
-    document.getElementById("number").textContent = formatted;
+    function updateValue() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startTime) / 1000);
+      const result = baseValue * Math.pow(increasePerSecond, secondsPassed);
+      document.getElementById("number").textContent = result.toFixed(2);
+    }
+
+    updateValue(); // начальное отображение
+    setInterval(updateValue, 1000); // обновлять каждую секунду
   </script>
 </body>
 </html>
