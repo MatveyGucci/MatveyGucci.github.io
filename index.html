@@ -20,19 +20,24 @@
   <script>
     const baseValue = 9;
     const growthPerSecond = 1.001;
-    const startDate = new Date("2025-04-14T19:00:00Z");
+
+    const startDate = new Date("2025-04-14T16:00:00Z");
 
     const valueElement = document.getElementById("number");
 
     function updateValue() {
       const now = new Date();
       const secondsPassed = Math.floor((now - startDate) / 1000);
-      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
-      valueElement.textContent = currentValue.toFixed(2);
+
+      if (secondsPassed >= 0) {
+        const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+        valueElement.textContent = `${currentValue.toFixed(2)} грн`;
+      } else {
+        valueElement.textContent = "Ожидание старта...";
+      }
     }
 
     updateValue();
-
     setInterval(updateValue, 1000);
   </script>
 </body>
