@@ -58,7 +58,6 @@
     const baseValue = 9;
     const growthPerSecond = 1.001;
 
-    // Установим стартовую дату с учетом украинского времени (UTC+3)
     const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); // 14 апреля 2025, 19:00 по Киеву
 
     const valueElement = document.getElementById("number");
@@ -71,7 +70,6 @@
       data: {
         labels: labels,
         datasets: [{
-          //label: "Сумма долга (грн)",
           data: dataPoints,
           borderColor: "yellow",
           borderWidth: 2,
@@ -85,15 +83,25 @@
         maintainAspectRatio: false,
         scales: {
           x: {
-            ticks: { color: "gray", maxTicksLimit: 10 },
+            ticks: {
+              color: "white",
+              maxTicksLimit: 10
+            }
           },
           y: {
-            ticks: { color: "gray" },
+            ticks: {
+              color: "white",
+              callback: function(value) {
+                if (value >= 1e6) return (value / 1e6).toFixed(1) + 'm';
+                if (value >= 1e3) return (value / 1e3).toFixed(1) + 'k';
+                return value;
+              }
+            },
             beginAtZero: false
           }
         },
         plugins: {
-          legend: { labels: { color: "gray" } }
+          legend: { display: false }
         }
       }
     });
@@ -114,7 +122,7 @@
     function buildInitialGraph() {
       const now = new Date();
       const secondsPassed = Math.floor((now - startDate) / 1000);
-      const interval = 1; // 5 секунд
+      const interval = 5;
 
       for (let i = 0; i <= secondsPassed; i += interval) {
         const value = baseValue * Math.pow(growthPerSecond, i);
@@ -143,12 +151,11 @@
       chart.update();
     }
 
+    // Запуск
     updateValueDisplay();
     buildInitialGraph();
-    setInterval(() => {
-      updateValueDisplay();
-      updateGraph();
-    }, 1000); // каждые 5 секунд
+    setInterval(updateValueDisplay, 1000); // Обновлять сумму каждую секунду
+    setInterval(updateGraph, 5000);        // Обновлять график каждые 5 секунд
   </script>
 </body>
 </html>
