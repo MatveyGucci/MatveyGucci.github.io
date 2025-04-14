@@ -3,33 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>Сколько мне должен Игорь</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       background-color: black;
       color: yellow;
       font-family: sans-serif;
-      text-align: center;
-      margin-top: 20%;
-      font-size: 64px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    footer {
-      margin-top: auto;
-      font-size: 16px;
-      color: gray;
-      padding-bottom: 20px;
+
+    #number {
+      font-size: 48px;
       text-align: center;
+      padding: 20px 0;
+    }
+
+    #chart-container {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      font-size: 14px;
+      color: gray;
+      text-align: center;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
   <div id="number"></div>
-  <footer>Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809</footer> 
+
+  <div id="chart-container">
+    <canvas id="debtChart" width="800" height="400"></canvas>
+  </div>
+
+  <footer>
+    Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809
+  </footer>
+
   <script>
     const baseValue = 9;
     const growthPerSecond = 1.001;
-
     const startDate = new Date("2025-04-14T16:00:00Z");
-
     const valueElement = document.getElementById("number");
 
     function updateValue() {
@@ -39,13 +60,68 @@
       if (secondsPassed >= 0) {
         const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
         valueElement.textContent = `${currentValue.toFixed(2)} грн`;
+        return { value: currentValue, seconds: secondsPassed };
       } else {
         valueElement.textContent = "С тебя 1.000.000$, Умник";
+        return { value: 0, seconds: 0 };
       }
+    }
+
+    function generateChartData() {
+      const dataPoints = [];
+      const labels = [];
+      const now = new Date();
+      const secondsTotal = Math.floor((now - startDate) / 1000);
+
+      const step = Math.floor(secondsTotal / 20) || 1;
+
+      for (let i = 0; i <= secondsTotal; i += step) {
+        const time = new Date(startDate.getTime() + i * 1000);
+        const value = baseValue * Math.pow(growthPerSecond, i);
+        labels.push(time.toLocaleTimeString());
+        dataPoints.push(value);
+      }
+
+      return { labels, dataPoints };
+    }
+
+    function drawChart() {
+      const ctx = document.getElementById("debtChart").getContext("2d");
+      const { labels, dataPoints } = generateChartData();
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Сумма долга (грн)",
+            data: dataPoints,
+            borderColor: "yellow",
+            borderWidth: 2,
+            tension: 0.2,
+            fill: false,
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              ticks: { color: "white" }
+            },
+            y: {
+              ticks: { color: "white" },
+              beginAtZero: false
+            }
+          },
+          plugins: {
+            legend: { labels: { color: "white" } }
+          }
+        }
+      });
     }
 
     updateValue();
     setInterval(updateValue, 1000);
+    drawChart();
   </script>
 </body>
 </html>
