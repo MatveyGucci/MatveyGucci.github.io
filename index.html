@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Рост числа</title>
+  <title>Рост числа в реальном времени</title>
   <style>
     body {
       background-color: black;
@@ -18,24 +18,20 @@
   <div id="number"></div>
 
   <script>
-    const startDate = new Date("2025-04-14");
-    const today = new Date();
-
-    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-
     const baseValue = 9;
-    const dailyIncrease = 1.05;
-
-    let currentValue = baseValue * Math.pow(dailyIncrease, daysPassed);
+    const growthPerSecond = 1.001;
+    const startDate = new Date("2025-04-14T19:00:00Z");
 
     const valueElement = document.getElementById("number");
 
     function updateValue() {
-      currentValue *= 1.001;
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
       valueElement.textContent = currentValue.toFixed(2);
     }
 
-    valueElement.textContent = currentValue.toFixed(2);
+    updateValue();
 
     setInterval(updateValue, 1000);
   </script>
