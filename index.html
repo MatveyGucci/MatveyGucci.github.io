@@ -71,7 +71,7 @@
       data: {
         labels: labels,
         datasets: [{
-          label: "Сумма долга (грн)",
+          //label: "Сумма долга (грн)",
           data: dataPoints,
           borderColor: "yellow",
           borderWidth: 2,
@@ -85,15 +85,15 @@
         maintainAspectRatio: false,
         scales: {
           x: {
-            ticks: { color: "white", maxTicksLimit: 10 },
+            ticks: { color: "gray", maxTicksLimit: 10 },
           },
           y: {
-            ticks: { color: "white" },
+            ticks: { color: "gray" },
             beginAtZero: false
           }
         },
         plugins: {
-          legend: { labels: { color: "white" } }
+          legend: { labels: { color: "gray" } }
         }
       }
     });
@@ -148,7 +148,7 @@
     setInterval(() => {
       updateValueDisplay();
       updateGraph();
-    }, 5000); // каждые 5 секунд
+    }, 1000); // каждые 5 секунд
   </script>
 </body>
 </html>
