@@ -27,7 +27,7 @@
       align-items: center;
       justify-content: center;
       padding: 10px 20px;
-      max-height: 300px; /* уменьшили размер графика */
+      max-height: 300px;
     }
 
     canvas {
@@ -57,9 +57,11 @@
   <script>
     const baseValue = 9;
     const growthPerSecond = 1.001;
-    const startDate = new Date("2025-04-14T16:00:00Z");
-    const valueElement = document.getElementById("number");
 
+    // Установим стартовую дату с учетом украинского времени (UTC+3)
+    const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); // 14 апреля 2025, 19:00 по Киеву
+
+    const valueElement = document.getElementById("number");
     const ctx = document.getElementById("debtChart").getContext("2d");
     const labels = [];
     const dataPoints = [];
@@ -96,7 +98,7 @@
       }
     });
 
-    function update() {
+    function updateValueDisplay() {
       const now = new Date();
       const secondsPassed = Math.floor((now - startDate) / 1000);
 
@@ -107,24 +109,46 @@
 
       const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
       valueElement.textContent = `${currentValue.toFixed(2)} грн`;
-
-      const timeLabel = now.toLocaleTimeString();
-
-      if (labels.length === 0 || labels[labels.length - 1] !== timeLabel) {
-        labels.push(timeLabel);
-        dataPoints.push(currentValue);
-
-        if (labels.length > 60) {
-          labels.shift();
-          dataPoints.shift();
-        }
-
-        chart.update();
-      }
     }
 
-    update();
-    setInterval(update, 1000);
+    function buildInitialGraph() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const interval = 5; // 5 секунд
+
+      for (let i = 0; i <= secondsPassed; i += interval) {
+        const value = baseValue * Math.pow(growthPerSecond, i);
+        const timeLabel = new Date(startDate.getTime() + i * 1000).toLocaleTimeString('uk-UA');
+        labels.push(timeLabel);
+        dataPoints.push(value);
+      }
+
+      chart.update();
+    }
+
+    function updateGraph() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const value = baseValue * Math.pow(growthPerSecond, secondsPassed);
+      const timeLabel = now.toLocaleTimeString('uk-UA');
+
+      labels.push(timeLabel);
+      dataPoints.push(value);
+
+      if (labels.length > 100) {
+        labels.shift();
+        dataPoints.shift();
+      }
+
+      chart.update();
+    }
+
+    updateValueDisplay();
+    buildInitialGraph();
+    setInterval(() => {
+      updateValueDisplay();
+      updateGraph();
+    }, 5000); // каждые 5 секунд
   </script>
 </body>
 </html>
