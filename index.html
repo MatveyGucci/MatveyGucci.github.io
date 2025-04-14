@@ -27,7 +27,7 @@
       align-items: center;
       justify-content: center;
       padding: 0 20px;
-      max-height: 500px; /* увеличили график, но с ограничением */
+      max-height: 500px; 
     }
 
     canvas {
@@ -58,7 +58,7 @@
     const baseValue = 9;
     const growthPerSecond = 1.001;
 
-    const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); // 14 апреля 2025, 19:00 по Киеву
+    const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); 
 
     const valueElement = document.getElementById("number");
     const ctx = document.getElementById("debtChart").getContext("2d");
@@ -74,9 +74,9 @@
           borderColor: "yellow",
           borderWidth: 2,
           tension: 0.2,
-          pointRadius: 0, // точки не видны всегда
+          pointRadius: 0,
           pointHoverRadius: 6,
-          pointHoverBackgroundColor: "lime", // зелёная точка при наведении
+          pointHoverBackgroundColor: "lime", 
           fill: false,
         }]
       },
@@ -172,8 +172,8 @@
     // Запуск
     updateValueDisplay();
     buildInitialGraph();
-    setInterval(updateValueDisplay, 1000); // Обновление суммы каждую секунду
-    setInterval(updateGraph, 5000);        // Обновление графика каждые 5 сек
+    setInterval(updateValueDisplay, 1000); 
+    setInterval(updateGraph, 5000); 
   </script>
 </body>
 </html>
