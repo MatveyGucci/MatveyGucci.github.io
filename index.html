@@ -114,7 +114,7 @@
     function buildInitialGraph() {
       const now = new Date();
       const secondsPassed = Math.floor((now - startDate) / 1000);
-      const interval = 5; // 5 секунд
+      const interval = 1; // 5 секунд
 
       for (let i = 0; i <= secondsPassed; i += interval) {
         const value = baseValue * Math.pow(growthPerSecond, i);
