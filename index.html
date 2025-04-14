@@ -5,14 +5,14 @@
   <title>Сколько мне должен Игорь</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
       background-color: black;
       color: yellow;
       font-family: sans-serif;
-      margin: 0;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
     #number {
@@ -26,13 +26,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 20px;
-      max-height: 300px;
+      padding: 0 20px;
+      max-height: 500px; /* увеличили график, но с ограничением */
     }
 
     canvas {
-      max-height: 100%;
       width: 100%;
+      max-height: 100%;
     }
 
     footer {
@@ -74,6 +74,9 @@
           borderColor: "yellow",
           borderWidth: 2,
           tension: 0.2,
+          pointRadius: 0, // точки не видны всегда
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: "lime", // зелёная точка при наведении
           fill: false,
         }]
       },
@@ -81,6 +84,10 @@
         animation: false,
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'nearest',
+          intersect: false
+        },
         scales: {
           x: {
             ticks: {
@@ -101,7 +108,18 @@
           }
         },
         plugins: {
-          legend: { display: false }
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                const val = context.raw;
+                if (val >= 1e6) return (val / 1e6).toFixed(2) + " млн грн";
+                if (val >= 1e3) return (val / 1e3).toFixed(2) + " тыс грн";
+                return val.toFixed(2) + " грн";
+              }
+            }
+          }
         }
       }
     });
@@ -154,8 +172,8 @@
     // Запуск
     updateValueDisplay();
     buildInitialGraph();
-    setInterval(updateValueDisplay, 1000); // Обновлять сумму каждую секунду
-    setInterval(updateGraph, 5000);        // Обновлять график каждые 5 секунд
+    setInterval(updateValueDisplay, 1000); // Обновление суммы каждую секунду
+    setInterval(updateGraph, 5000);        // Обновление графика каждые 5 сек
   </script>
 </body>
 </html>
