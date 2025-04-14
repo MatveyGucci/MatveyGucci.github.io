@@ -41,7 +41,7 @@
   <footer>Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809</footer>
 
   <script>
-    const startTime = new Date("2025-04-14T00:00:00Z");
+    const startTime = new Date("2025-04-14T00:00:00");
     const baseValue = 9;
     const increasePerSecond = 1.001;
 
@@ -61,7 +61,7 @@
     for (let i = 0; i <= 24 * 6; i++) { // 24 часа * 6 = каждые 10 мин
       const secondsPassed = i * 600;
       const value = baseValue * Math.pow(increasePerSecond, secondsPassed);
-      labels.push(`${i * 10} мин`);
+      data.push(parseFloat(value.toFixed(2)));
       data.push(value.toFixed(2));
     }
 
