@@ -26,6 +26,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 10px 20px;
+      max-height: 300px; /* уменьшили размер графика */
+    }
+
+    canvas {
+      max-height: 100%;
+      width: 100%;
     }
 
     footer {
@@ -40,7 +47,7 @@
   <div id="number"></div>
 
   <div id="chart-container">
-    <canvas id="debtChart" width="800" height="400"></canvas>
+    <canvas id="debtChart"></canvas>
   </div>
 
   <footer>
@@ -53,75 +60,71 @@
     const startDate = new Date("2025-04-14T16:00:00Z");
     const valueElement = document.getElementById("number");
 
-    function updateValue() {
+    const ctx = document.getElementById("debtChart").getContext("2d");
+    const labels = [];
+    const dataPoints = [];
+
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Сумма долга (грн)",
+          data: dataPoints,
+          borderColor: "yellow",
+          borderWidth: 2,
+          tension: 0.2,
+          fill: false,
+        }]
+      },
+      options: {
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: { color: "white", maxTicksLimit: 10 },
+          },
+          y: {
+            ticks: { color: "white" },
+            beginAtZero: false
+          }
+        },
+        plugins: {
+          legend: { labels: { color: "white" } }
+        }
+      }
+    });
+
+    function update() {
       const now = new Date();
       const secondsPassed = Math.floor((now - startDate) / 1000);
 
-      if (secondsPassed >= 0) {
-        const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
-        valueElement.textContent = `${currentValue.toFixed(2)} грн`;
-        return { value: currentValue, seconds: secondsPassed };
-      } else {
+      if (secondsPassed < 0) {
         valueElement.textContent = "С тебя 1.000.000$, Умник";
-        return { value: 0, seconds: 0 };
-      }
-    }
-
-    function generateChartData() {
-      const dataPoints = [];
-      const labels = [];
-      const now = new Date();
-      const secondsTotal = Math.floor((now - startDate) / 1000);
-
-      const step = Math.floor(secondsTotal / 20) || 1;
-
-      for (let i = 0; i <= secondsTotal; i += step) {
-        const time = new Date(startDate.getTime() + i * 1000);
-        const value = baseValue * Math.pow(growthPerSecond, i);
-        labels.push(time.toLocaleTimeString());
-        dataPoints.push(value);
+        return;
       }
 
-      return { labels, dataPoints };
-    }
+      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+      valueElement.textContent = `${currentValue.toFixed(2)} грн`;
 
-    function drawChart() {
-      const ctx = document.getElementById("debtChart").getContext("2d");
-      const { labels, dataPoints } = generateChartData();
+      const timeLabel = now.toLocaleTimeString();
 
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "Сумма долга (грн)",
-            data: dataPoints,
-            borderColor: "yellow",
-            borderWidth: 2,
-            tension: 0.2,
-            fill: false,
-          }]
-        },
-        options: {
-          scales: {
-            x: {
-              ticks: { color: "white" }
-            },
-            y: {
-              ticks: { color: "white" },
-              beginAtZero: false
-            }
-          },
-          plugins: {
-            legend: { labels: { color: "white" } }
-          }
+      if (labels.length === 0 || labels[labels.length - 1] !== timeLabel) {
+        labels.push(timeLabel);
+        dataPoints.push(currentValue);
+
+        if (labels.length > 60) {
+          labels.shift();
+          dataPoints.shift();
         }
-      });
+
+        chart.update();
+      }
     }
 
-    updateValue();
-    setInterval(updateValue, 1000);
-    drawChart();
+    update();
+    setInterval(update, 1000);
   </script>
 </body>
 </html>
