@@ -125,17 +125,23 @@
     });
 
     function updateValueDisplay() {
-      const now = new Date();
-      const secondsPassed = Math.floor((now - startDate) / 1000);
+  const now = new Date();
+  const secondsPassed = Math.floor((now - startDate) / 1000);
 
-      if (secondsPassed < 0) {
-        valueElement.textContent = "С тебя 1.000.000$, Умник";
-        return;
-      }
+  if (secondsPassed < 0) {
+    valueElement.textContent = "С тебя 1.000.000$, Умник";
+    return;
+  }
 
-      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
-      valueElement.textContent = `${currentValue.toFixed(2)} грн`;
-    }
+  const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+
+  const formatted = new Intl.NumberFormat('uk-UA', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(currentValue);
+
+  valueElement.textContent = `${formatted} грн`;
+}
 
     function buildInitialGraph() {
       const now = new Date();
