@@ -16,9 +16,9 @@
   <div id="number"></div>
 
   <script>
-    const startTime = new Date("2025-04-14T18:48:00Z"); // Старт с полуночи UTC 14 апреля 2025
+    const startTime = new Date("2025-04-14T18:48:00Z");
     const baseValue = 9;
-    const increasePerSecond = 1.001; // 0.1% = x1.001
+    const increasePerSecond = 1.001;
 
     function updateValue() {
       const now = new Date();
@@ -27,8 +27,8 @@
       document.getElementById("number").textContent = result.toFixed(2);
     }
 
-    updateValue(); // начальное отображение
-    setInterval(updateValue, 1000); // обновлять каждую секунду
+    updateValue();
+    setInterval(updateValue, 1000);
   </script>
 </body>
 </html>
