@@ -5,10 +5,12 @@
   <title>Рост числа</title>
   <style>
     body {
+      background-color: black;
+      color: yellow;
       font-family: sans-serif;
       text-align: center;
       margin-top: 20%;
-      font-size: 48px;
+      font-size: 64px;
     }
   </style>
 </head>
@@ -16,19 +18,24 @@
   <div id="number"></div>
 
   <script>
-    const startTime = new Date("2025-04-14T18:48:00Z");
+    // Дата начала отсчёта
+    const startDate = new Date("2025-04-14");
+    const today = new Date();
+
+    // Вычисляем количество дней
+    const daysPassed = Math.floor((today - startDate) / (1000 * 24));
+
+    // Начальное значение
     const baseValue = 9;
-    const increasePerSecond = 1.001;
 
-    function updateValue() {
-      const now = new Date();
-      const secondsPassed = Math.floor((now - startTime) / 1000);
-      const result = baseValue * Math.pow(increasePerSecond, secondsPassed);
-      document.getElementById("number").textContent = result.toFixed(2);
-    }
+    // Рост на 5% в день
+    const dailyIncrease = 1.05;
 
-    updateValue();
-    setInterval(updateValue, 1000);
+    // Итоговое значение: 9 * (1.05 ^ daysPassed)
+    const result = baseValue * Math.pow(dailyIncrease, daysPassed);
+
+    // Отображение с округлением
+    document.getElementById("number").textContent = result.toFixed(2);
   </script>
 </body>
 </html>
