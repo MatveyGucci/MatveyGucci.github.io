@@ -21,14 +21,23 @@
     const startDate = new Date("2025-04-14");
     const today = new Date();
 
-    const daysPassed = Math.floor((today - startDate) / (1000 * 24));
+    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
     const baseValue = 9;
     const dailyIncrease = 1.05;
 
-    const result = baseValue * Math.pow(dailyIncrease, daysPassed);
+    let currentValue = baseValue * Math.pow(dailyIncrease, daysPassed);
 
-    document.getElementById("number").textContent = result.toFixed(2);
+    const valueElement = document.getElementById("number");
+
+    function updateValue() {
+      currentValue *= 1.001;
+      valueElement.textContent = currentValue.toFixed(2);
+    }
+
+    valueElement.textContent = currentValue.toFixed(2);
+
+    setInterval(updateValue, 1000);
   </script>
 </body>
 </html>
