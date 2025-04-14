@@ -1,337 +1,51 @@
+<!DOCTYPE html>
 <html lang="en">
-
- 
 <head>
- 
   <meta charset="UTF-8">
- 
-
   <title>Сколько мне должен Игорь</title>
- 
-
-  <title>Рост числа</title>
- 
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- 
   <style>
- 
     body {
- 
-
       background-color: black;
- 
-
       color: yellow;
- 
       font-family: sans-serif;
- 
       text-align: center;
- 
-
       margin-top: 20%;
- 
-
       font-size: 64px;
- 
-
-      display: flex;
- 
-
-      flex-direction: column;
- 
-
-      justify-content: flex-start;
- 
-
-      height: 100vh;
- 
-
-      margin: 0;
- 
-
-      padding: 20px;
- 
     }
- 
-
-
- 
-
-    #number {
- 
-
-      font-size: 36px;
- 
-
-      margin-bottom: 20px;
- 
-
-    }
- 
-
-
- 
-
-    canvas {
- 
-
-      max-width: 100%;
- 
-
-      height: 400px;
- 
-
-    }
- 
-
-
- 
     footer {
- 
       margin-top: auto;
- 
       font-size: 16px;
- 
       color: gray;
- 
-
       padding-bottom: 20px;
- 
-
       text-align: center;
- 
-
-      padding-top: 20px;
- 
     }
- 
   </style>
- 
 </head>
- 
 <body>
- 
   <div id="number"></div>
- 
-
   <footer>Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809</footer> 
- 
-
   <script>
- 
-
     const baseValue = 9;
- 
-
     const growthPerSecond = 1.001;
- 
-
-  <canvas id="growthChart"></canvas>
- 
-
- 
 
     const startDate = new Date("2025-04-14T16:00:00Z");
- 
-
-  <footer>Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809</footer>
- 
-
- 
 
     const valueElement = document.getElementById("number");
- 
 
-  <script>
- 
-
-    const startTime = new Date("2025-04-14T00:00:00Z");
- 
-
-    const baseValue = 9;
- 
-
-    const increasePerSecond = 1.001;
- 
-
- 
     function updateValue() {
- 
       const now = new Date();
- 
-
       const secondsPassed = Math.floor((now - startDate) / 1000);
- 
-
-
- 
 
       if (secondsPassed >= 0) {
- 
-
         const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
- 
-
         valueElement.textContent = `${currentValue.toFixed(2)} грн`;
- 
-
       } else {
- 
-
         valueElement.textContent = "С тебя 1.000.000$, Умник";
- 
-
       }
- 
-
-      const secondsPassed = Math.floor((now - startTime) / 1000);
- 
-
-      const result = baseValue * Math.pow(increasePerSecond, secondsPassed);
- 
-
-      document.getElementById("number").textContent = result.toFixed(2);
- 
     }
- 
 
- 
     updateValue();
- 
     setInterval(updateValue, 1000);
- 
-
-
- 
-
-    // Построение графика (каждые 10 минут = 600 секунд, на 24 часа = 144 точки)
- 
-
-    const labels = [];
- 
-
-    const data = [];
- 
-
-    for (let i = 0; i <= 24 * 6; i++) { // 24 часа * 6 = каждые 10 мин
- 
-
-      const secondsPassed = i * 600;
- 
-
-      const value = baseValue * Math.pow(increasePerSecond, secondsPassed);
- 
-
-      labels.push(`${i * 10} мин`);
- 
-
-      data.push(value.toFixed(2));
- 
-
-    }
- 
-
-
- 
-
-    const ctx = document.getElementById('growthChart').getContext('2d');
- 
-
-    new Chart(ctx, {
- 
-
-      type: 'line',
- 
-
-      data: {
- 
-
-        labels: labels,
- 
-
-        datasets: [{
- 
-
-          label: 'Рост суммы',
- 
-
-          data: data,
- 
-
-          borderColor: 'blue',
- 
-
-          backgroundColor: 'rgba(0, 0, 255, 0.1)',
- 
-
-          fill: true,
- 
-
-          tension: 0.2,
- 
-
-          pointRadius: 0,
- 
-
-        }]
- 
-
-      },
- 
-
-      options: {
- 
-
-        scales: {
- 
-
-          x: {
- 
-
-            title: {
- 
-
-              display: true,
- 
-
-              text: 't'
- 
-
-            }
- 
-
-          },
- 
-
-          y: {
- 
-
-            title: {
- 
-
-              display: true,
- 
-
-              text: 'Долг'
- 
-
-            }
- 
-
-          }
- 
-
-        }
- 
-
-      }
- 
-
-    });
- 
   </script>
- 
 </body>
- 
 </html>
