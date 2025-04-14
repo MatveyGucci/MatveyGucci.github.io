@@ -40,16 +40,19 @@
 
   <footer>Уважаемые коллекторы, если вы желаете получить 80 процентов от долга, тогда я делюсь средством коммуникации с Игорем +380966078809</footer>
 
+  
   <script>
-    const startTime = new Date("2025-04-14T00:00:00");
     const baseValue = 9;
-    const increasePerSecond = 1.001;
+    const growthPerSecond = 1.001;
+    const startDate = new Date("2025-04-14T19:00:00Z");
+
+    const valueElement = document.getElementById("number");
 
     function updateValue() {
       const now = new Date();
-      const secondsPassed = Math.floor((now - startTime) / 1000);
-      const result = baseValue * Math.pow(increasePerSecond, secondsPassed);
-      document.getElementById("number").textContent = result.toFixed(2);
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+      valueElement.textContent = currentValue.toFixed(2);
     }
 
     updateValue();
@@ -73,11 +76,11 @@
         datasets: [{
           label: 'Рост суммы',
           data: data,
-          borderColor: 'blue',
-          backgroundColor: 'rgba(0, 0, 255, 0.1)',
+          borderColor: 'yellow',
+          backgroundColor: 'rgba(0, 0, 0, 0.1)',
           fill: true,
           tension: 0.2,
-          pointRadius: 0,
+          pointRadius: 0.1,
         }]
       },
       options: {
