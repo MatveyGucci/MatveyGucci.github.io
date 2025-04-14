@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Рост числа</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 20%;
+      font-size: 48px;
+    }
+  </style>
+</head>
+<body>
+  <div id="number"></div>
+
+  <script>
+    // Дата начала отсчёта
+    const startDate = new Date("2025-04-14");
+    const today = new Date();
+
+    // Вычисляем количество дней
+    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+    // Начальное значение
+    const baseValue = 9;
+
+    // Рост на 5% в день
+    const dailyIncrease = 1.05;
+
+    // Итоговое значение: 9 * (1.05 ^ daysPassed)
+    const result = baseValue * Math.pow(dailyIncrease, daysPassed);
+
+    // Отображение с округлением
+    document.getElementById("number").textContent = result.toFixed(2);
+  </script>
+</body>
+</html>
