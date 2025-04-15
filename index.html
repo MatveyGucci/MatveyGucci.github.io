@@ -13,8 +13,6 @@
       font-family: sans-serif;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      position: relative;
     }
 
     #number {
@@ -40,7 +38,7 @@
       align-items: center;
       justify-content: center;
       padding: 0 20px;
-      max-height: 500px;
+      max-height: 500px; 
     }
 
     canvas {
@@ -54,22 +52,6 @@
       text-align: center;
       padding: 20px;
     }
-
-    #runaway-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: red;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: top 0.2s, left 0.2s;
-      z-index: 10;
-    }
   </style>
 </head>
 <body>
@@ -78,8 +60,6 @@
     <div id="usd-amount"></div>
     <div id="us-debt"></div>
   </div>
-
-  <button id="runaway-btn">Уменьшить долг</button>
 
   <div id="chart-container">
     <canvas id="debtChart"></canvas>
@@ -90,225 +70,166 @@
   </footer>
 
   <script>
-  const baseValue = 9;
-  const growthPerSecond = 1.001;
-  const exchangeRate = 39;
+    const baseValue = 9;
+    const growthPerSecond = 1.001;
+    const exchangeRate = 39;
 
-  const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); 
+    const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); 
 
-  const uahAmount = document.getElementById("uah-amount");
-  const usdAmount = document.getElementById("usd-amount");
-  const usDebtElement = document.getElementById("us-debt");
-  const ctx = document.getElementById("debtChart").getContext("2d");
+    const uahAmount = document.getElementById("uah-amount");
+    const usdAmount = document.getElementById("usd-amount");
+    const usDebtElement = document.getElementById("us-debt");
+    const ctx = document.getElementById("debtChart").getContext("2d");
 
-  const labels = [];
-  const dataPoints = [];
+    const labels = [];
+    const dataPoints = [];
 
-  const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [{
-        data: dataPoints,
-        borderColor: "yellow",
-        borderWidth: 2,
-        tension: 0.2,
-        pointRadius: 0,
-        pointHoverRadius: 6,
-        pointHoverBackgroundColor: "lime", 
-        fill: false,
-      }]
-    },
-    options: {
-      animation: false,
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'nearest',
-        intersect: false
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: dataPoints,
+          borderColor: "yellow",
+          borderWidth: 2,
+          tension: 0.2,
+          pointRadius: 0,
+          pointHoverRadius: 6,
+          pointHoverBackgroundColor: "lime", 
+          fill: false,
+        }]
       },
-      scales: {
-        x: {
-          ticks: {
-            color: "white",
-            maxTicksLimit: 10
+      options: {
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'nearest',
+          intersect: false
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: "white",
+              maxTicksLimit: 10
+            }
+          },
+          y: {
+            ticks: {
+              color: "white",
+              callback: function(value) {
+                if (value >= 1e6) return (value / 1e6).toFixed(1) + 'm';
+                if (value >= 1e3) return (value / 1e3).toFixed(1) + 'k';
+                return value;
+              }
+            },
+            beginAtZero: false
           }
         },
-        y: {
-          ticks: {
-            color: "white",
-            callback: function(value) {
-              if (value >= 1e6) return (value / 1e6).toFixed(1) + 'm';
-              if (value >= 1e3) return (value / 1e3).toFixed(1) + 'k';
-              return value;
-            }
-          },
-          beginAtZero: false
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          enabled: true,
-          external: function(context) {
-            const chart = context.chart;
-            const tooltipModel = context.tooltip;
-
-            if (tooltipModel.opacity !== 0 && tooltipModel.dataPoints?.length > 0) {
-              const index = tooltipModel.dataPoints[0].dataIndex;
-              const originalValue = dataPoints[index];
-
-              const randomOffset = (Math.random() - 0.5) * originalValue * 0.1;
-              chart.data.datasets[0].data[index] = originalValue + randomOffset;
-              chart.update('none');
-
-              setTimeout(() => {
-                chart.data.datasets[0].data[index] = originalValue;
-                chart.update('none');
-              }, 200);
-
-              // Убираем tooltip визуально
-              tooltipModel.opacity = 0;
-            }
-          },
-          callbacks: {
-            label: function(context) {
-              const val = context.raw;
-              if (val >= 1e6) return (val / 1e6).toFixed(2) + " млн грн";
-              if (val >= 1e3) return (val / 1e3).toFixed(2) + " тыс грн";
-              return val.toFixed(2) + " грн";
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                const val = context.raw;
+                if (val >= 1e6) return (val / 1e6).toFixed(2) + " млн грн";
+                if (val >= 1e3) return (val / 1e3).toFixed(2) + " тыс грн";
+                return val.toFixed(2) + " грн";
+              }
             }
           }
         }
       }
+    });
+
+    function updateValueDisplay() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+
+      if (secondsPassed < 0) {
+        uahAmount.textContent = "С тебя 1.000.000$, Умник";
+        usdAmount.textContent = "";
+        return;
+      }
+
+      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+
+      const formattedUAH = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'UAH',
+        currencyDisplay: 'narrowSymbol',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(currentValue);
+
+      const usdApprox = currentValue / exchangeRate;
+      const formattedUSD = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(usdApprox);
+
+      uahAmount.textContent = `${formattedUAH}`;
+      usdAmount.textContent = `≈ ${formattedUSD} $`;
     }
-  });
 
-  function updateValueDisplay() {
-    const now = new Date();
-    const secondsPassed = Math.floor((now - startDate) / 1000);
+    const initialUSDebt = 34567890123456; // примерная стартовая точка
+    const usDebtGrowthPerSecond = 10000;
+    const usDebtStartDate = new Date();
 
-    if (secondsPassed < 0) {
-      uahAmount.textContent = "С тебя 1.000.000$, Умник";
-      usdAmount.textContent = "";
-      return;
+    function updateUSDebt() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - usDebtStartDate) / 1000);
+      const currentDebt = initialUSDebt + secondsPassed * usDebtGrowthPerSecond;
+
+      const formattedDebt = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(currentDebt);
+
+      usDebtElement.textContent = `Госдолг США: ${formattedDebt}`;
     }
 
-    const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+    function buildInitialGraph() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const interval = 5;
 
-    const formattedUAH = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'UAH',
-      currencyDisplay: 'narrowSymbol',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(currentValue);
+      for (let i = 0; i <= secondsPassed; i += interval) {
+        const value = baseValue * Math.pow(growthPerSecond, i);
+        const timeLabel = new Date(startDate.getTime() + i * 1000).toLocaleTimeString('uk-UA');
+        labels.push(timeLabel);
+        dataPoints.push(value);
+      }
 
-    const usdApprox = currentValue / exchangeRate;
-    const formattedUSD = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(usdApprox);
+      chart.update();
+    }
 
-    uahAmount.textContent = `${formattedUAH}`;
-    usdAmount.textContent = `≈ ${formattedUSD} $`;
-  }
+    function updateGraph() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
+      const value = baseValue * Math.pow(growthPerSecond, secondsPassed);
+      const timeLabel = now.toLocaleTimeString('uk-UA');
 
-  const initialUSDebt = 34567890123456;
-  const usDebtGrowthPerSecond = 10000;
-  const usDebtStartDate = new Date();
-
-  function updateUSDebt() {
-    const now = new Date();
-    const secondsPassed = Math.floor((now - usDebtStartDate) / 1000);
-    const currentDebt = initialUSDebt + secondsPassed * usDebtGrowthPerSecond;
-
-    const formattedDebt = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(currentDebt);
-
-    usDebtElement.textContent = `Госдолг США: ${formattedDebt}`;
-  }
-
-  function buildInitialGraph() {
-    const now = new Date();
-    const secondsPassed = Math.floor((now - startDate) / 1000);
-    const interval = 5;
-
-    for (let i = 0; i <= secondsPassed; i += interval) {
-      const value = baseValue * Math.pow(growthPerSecond, i);
-      const timeLabel = new Date(startDate.getTime() + i * 1000).toLocaleTimeString('uk-UA');
       labels.push(timeLabel);
       dataPoints.push(value);
+
+      if (labels.length > 100) {
+        labels.shift();
+        dataPoints.shift();
+      }
+
+      chart.update();
     }
 
-    chart.update();
-  }
+    updateValueDisplay();
+    updateUSDebt();
+    buildInitialGraph();
 
-  function updateGraph() {
-    const now = new Date();
-    const secondsPassed = Math.floor((now - startDate) / 1000);
-    const value = baseValue * Math.pow(growthPerSecond, secondsPassed);
-    const timeLabel = now.toLocaleTimeString('uk-UA');
-
-    labels.push(timeLabel);
-    dataPoints.push(value);
-
-    if (labels.length > 100) {
-      labels.shift();
-      dataPoints.shift();
-    }
-
-    chart.update();
-  }
-
-  updateValueDisplay();
-  updateUSDebt();
-  buildInitialGraph();
-
-  setInterval(updateValueDisplay, 1000);
-  setInterval(updateUSDebt, 1000);
-  setInterval(updateGraph, 5000);
-
-  // Убегающая кнопка
-  const button = document.getElementById("runaway-btn");
-
-let lastMove = 0;
-document.addEventListener("mousemove", (e) => {
-  const now = Date.now();
-  if (now - lastMove < 20) return; // Ограничиваем до одного вызова каждые 20мс
-  lastMove = now;
-
-  const rect = button.getBoundingClientRect();
-  const distance = 100;
-
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-
-  const btnX = rect.left + rect.width / 2;
-  const btnY = rect.top + rect.height / 2;
-
-  const deltaX = mouseX - btnX;
-  const deltaY = mouseY - btnY;
-
-  const dist = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
-  if (dist < distance) {
-    let newLeft = button.offsetLeft - deltaX * 0.5;
-    let newTop = button.offsetTop - deltaY * 0.5;
-
-    const maxX = window.innerWidth - button.offsetWidth;
-    const maxY = window.innerHeight - button.offsetHeight;
-
-    newLeft = Math.max(0, Math.min(maxX, newLeft));
-    newTop = Math.max(0, Math.min(maxY, newTop));
-
-    button.style.left = newLeft + "px";
-    button.style.top = newTop + "px";
-  }
-});
-</script>
+    setInterval(updateValueDisplay, 1000);
+    setInterval(updateUSDebt, 1000);
+    setInterval(updateGraph, 5000);
+  </script>
 </body>
 </html>
