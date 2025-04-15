@@ -149,16 +149,34 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            enabled: true,
-            callbacks: {
-              label: function(context) {
-                const val = context.raw;
-                if (val >= 1e6) return (val / 1e6).toFixed(2) + " млн грн";
-                if (val >= 1e3) return (val / 1e3).toFixed(2) + " тыс грн";
-                return val.toFixed(2) + " грн";
-              }
-            }
-          }
+  enabled: true,
+  external: function(context) {
+    const chart = context.chart;
+    const tooltipModel = context.tooltip;
+
+    if (tooltipModel.opacity !== 0 && tooltipModel.dataPoints?.length > 0) {
+      const index = tooltipModel.dataPoints[0].dataIndex;
+      const originalValue = dataPoints[index];
+
+      const randomOffset = (Math.random() - 0.5) * originalValue * 0.1; 
+      chart.data.datasets[0].data[index] = originalValue + randomOffset;
+      chart.update('none');
+
+      setTimeout(() => {
+        chart.data.datasets[0].data[index] = originalValue;
+        chart.update('none');
+      }, 200);
+    }
+  },
+  callbacks: {
+    label: function(context) {
+      const val = context.raw;
+      if (val >= 1e6) return (val / 1e6).toFixed(2) + " млн грн";
+      if (val >= 1e3) return (val / 1e3).toFixed(2) + " тыс грн";
+      return val.toFixed(2) + " грн";
+    }
+  }
+}
         }
       }
     });
