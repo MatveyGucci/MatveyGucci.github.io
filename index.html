@@ -275,35 +275,40 @@
   // Убегающая кнопка
   const button = document.getElementById("runaway-btn");
 
-  document.addEventListener("mousemove", (e) => {
-    const rect = button.getBoundingClientRect();
-    const distance = 100;
+let lastMove = 0;
+document.addEventListener("mousemove", (e) => {
+  const now = Date.now();
+  if (now - lastMove < 20) return; // Ограничиваем до одного вызова каждые 20мс
+  lastMove = now;
 
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+  const rect = button.getBoundingClientRect();
+  const distance = 100;
 
-    const btnX = rect.left + rect.width / 2;
-    const btnY = rect.top + rect.height / 2;
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
 
-    const deltaX = mouseX - btnX;
-    const deltaY = mouseY - btnY;
+  const btnX = rect.left + rect.width / 2;
+  const btnY = rect.top + rect.height / 2;
 
-    const dist = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+  const deltaX = mouseX - btnX;
+  const deltaY = mouseY - btnY;
 
-    if (dist < distance) {
-      let newLeft = button.offsetLeft - deltaX * 0.5;
-      let newTop = button.offsetTop - deltaY * 0.5;
+  const dist = Math.sqrt(deltaX ** 2 + deltaY ** 2);
 
-      const maxX = window.innerWidth - button.offsetWidth;
-      const maxY = window.innerHeight - button.offsetHeight;
+  if (dist < distance) {
+    let newLeft = button.offsetLeft - deltaX * 0.5;
+    let newTop = button.offsetTop - deltaY * 0.5;
 
-      newLeft = Math.max(0, Math.min(maxX, newLeft));
-      newTop = Math.max(0, Math.min(maxY, newTop));
+    const maxX = window.innerWidth - button.offsetWidth;
+    const maxY = window.innerHeight - button.offsetHeight;
 
-      button.style.left = newLeft + "px";
-      button.style.top = newTop + "px";
-    }
-  });
+    newLeft = Math.max(0, Math.min(maxX, newLeft));
+    newTop = Math.max(0, Math.min(maxY, newTop));
+
+    button.style.left = newLeft + "px";
+    button.style.top = newTop + "px";
+  }
+});
 </script>
 </body>
 </html>
