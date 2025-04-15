@@ -21,6 +21,17 @@
       padding: 20px 0;
     }
 
+    #usd-amount {
+      font-size: 20px;
+      color: gray;
+    }
+
+    #us-debt {
+      font-size: 14px;
+      color: gray;
+      margin-top: 5px;
+    }
+
     #chart-container {
       flex-grow: 1;
       display: flex;
@@ -44,7 +55,11 @@
   </style>
 </head>
 <body>
-  <div id="number"></div>
+  <div id="number">
+    <div id="uah-amount"></div>
+    <div id="usd-amount"></div>
+    <div id="us-debt"></div>
+  </div>
 
   <div id="chart-container">
     <canvas id="debtChart"></canvas>
@@ -57,11 +72,15 @@
   <script>
     const baseValue = 9;
     const growthPerSecond = 1.001;
+    const exchangeRate = 39;
 
     const startDate = new Date(Date.UTC(2025, 3, 14, 16, 0, 0)); 
 
-    const valueElement = document.getElementById("number");
+    const uahAmount = document.getElementById("uah-amount");
+    const usdAmount = document.getElementById("usd-amount");
+    const usDebtElement = document.getElementById("us-debt");
     const ctx = document.getElementById("debtChart").getContext("2d");
+
     const labels = [];
     const dataPoints = [];
 
@@ -125,23 +144,49 @@
     });
 
     function updateValueDisplay() {
-  const now = new Date();
-  const secondsPassed = Math.floor((now - startDate) / 1000);
+      const now = new Date();
+      const secondsPassed = Math.floor((now - startDate) / 1000);
 
-  if (secondsPassed < 0) {
-    valueElement.textContent = "С тебя 1.000.000$, Умник";
-    return;
-  }
+      if (secondsPassed < 0) {
+        uahAmount.textContent = "С тебя 1.000.000$, Умник";
+        usdAmount.textContent = "";
+        return;
+      }
 
-  const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
+      const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
 
-  const formatted = new Intl.NumberFormat('uk-UA', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(currentValue);
+      const formattedUAH = new Intl.NumberFormat('uk-UA', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(currentValue);
 
-  valueElement.textContent = `${formatted} грн`;
-}
+      const usdApprox = currentValue / exchangeRate;
+      const formattedUSD = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(usdApprox);
+
+      uahAmount.textContent = `${formattedUAH} грн`;
+      usdAmount.textContent = `≈ ${formattedUSD} $`;
+    }
+
+    const initialUSDebt = 34567890123456; // примерная стартовая точка
+    const usDebtGrowthPerSecond = 10000;
+    const usDebtStartDate = new Date();
+
+    function updateUSDebt() {
+      const now = new Date();
+      const secondsPassed = Math.floor((now - usDebtStartDate) / 1000);
+      const currentDebt = initialUSDebt + secondsPassed * usDebtGrowthPerSecond;
+
+      const formattedDebt = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(currentDebt);
+
+      usDebtElement.textContent = `Госдолг США: ${formattedDebt}`;
+    }
 
     function buildInitialGraph() {
       const now = new Date();
@@ -175,11 +220,13 @@
       chart.update();
     }
 
-    // Запуск
     updateValueDisplay();
+    updateUSDebt();
     buildInitialGraph();
-    setInterval(updateValueDisplay, 1000); 
-    setInterval(updateGraph, 5000); 
+
+    setInterval(updateValueDisplay, 1000);
+    setInterval(updateUSDebt, 1000);
+    setInterval(updateGraph, 5000);
   </script>
 </body>
 </html>
