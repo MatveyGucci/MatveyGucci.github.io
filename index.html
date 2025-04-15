@@ -155,7 +155,10 @@
 
       const currentValue = baseValue * Math.pow(growthPerSecond, secondsPassed);
 
-      const formattedUAH = new Intl.NumberFormat('uk-UA', {
+      const formattedUAH = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'UAH',
+        currencyDisplay: 'narrowSymbol',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(currentValue);
